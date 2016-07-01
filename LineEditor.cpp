@@ -39,7 +39,7 @@ void LineEditor::run() {
 
 	std::string usercommand;
 	std::cin >> usercommand;
-	while (usercommand!="q") {
+	while (std::cin) {
 		
 		command.setCommand(usercommand);
 		command.parse();
@@ -52,7 +52,25 @@ void LineEditor::run() {
 
 		//std::cout << csymbol << ad1 << ad2 << std::endl;
 
-		if (command.isValid()){
+		if (numlines == 0 && command.isValid()){
+			if (csymbol == 'a'){
+				//std::cout << "IN" << std::endl;
+				append(ad1);
+				isSaved = false;
+			}
+			else if (csymbol == 'i'){
+				insert(ad1);
+				isSaved = false;
+			}
+			else if (csymbol == 'q'){
+				quit();
+				break;
+			}
+			else{
+				std::cout << "error: file empty - enter 'q' to quit, 'a' to append or 'i' to insert" << std::endl;
+			}
+		}
+		else if (command.isValid()){
 
 			if (csymbol == 'p'){
 				//std::cout << "IN" << std::endl;
@@ -61,6 +79,7 @@ void LineEditor::run() {
 			else if (csymbol == 'a'){
 				//std::cout << "IN" << std::endl;
 				append(ad1);
+				isSaved = false;
 			}
 			else if (csymbol == 'n'){
 				//std::cout << "IN" << std::endl;
@@ -68,12 +87,15 @@ void LineEditor::run() {
 			}
 			else if (csymbol == 'i'){
 				insert(ad1);
+				isSaved = false;
 			}
 			else if (csymbol == 'r'){
 				removel(ad1,ad2);
+				isSaved = false;
 			}
 			else if (csymbol == 'c'){
 				change(ad1,ad2);
+				isSaved = false;
 			}
 			else if (csymbol == 'u'){
 				up(ad1);
@@ -83,6 +105,10 @@ void LineEditor::run() {
 			}
 			else if (csymbol == 'w'){
 				write();
+			}
+			else if (csymbol == 'q'){
+				quit();
+				break;
 			}
 			else if (csymbol == '='){
 				std::cout << current << std::endl;
@@ -247,6 +273,7 @@ void LineEditor::change(int& start, int& end) {
 		}
 		++i;
 	}
+	current = end;
 
 }
 
@@ -285,6 +312,23 @@ void LineEditor::write() {
 	}
 
 	fs.close();
-	
+	isSaved = true;
 }
 
+void LineEditor::quit(){
+	if (!isSaved){
+		std::cout << "Save changes to " << filename << " (y/n)? ";
+		std::string response;
+		std::cin>>response;
+		while(!(response == "y" || response == "n")){
+			std::cout << "Invalid response. Please enter (y/n). "<< std::endl;
+			std::cout << "Save changes to " << filename << "(y/n)? ";
+			std::cin>>response;
+		}
+
+		if(response == "y"){
+			write();
+		}
+
+	}
+}

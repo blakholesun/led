@@ -24,13 +24,27 @@ void Command::parse()
 
 	// Look for first command characters
 	std::size_t found_symbol = newCommand.find_first_of("airpncudwq=");
-	if (found_symbol != std::string::npos) {
+	std::size_t found_other = newCommand.find_last_of("airpncudwq=");
+	
+	if (found_symbol != found_other){
+		std::cout << "Invalid Command"<< std::endl;
+		valid = false;
+		return;
+	}
+	else if (found_symbol != std::string::npos) {
 		csymbol = command[found_symbol];
 	}
 
 	//look for occurrence of comma if none 
-	std::size_t found_comma = newCommand.find(",");
-	if (found_comma != std::string::npos) {
+	std::size_t found_comma = newCommand.find_first_of(",");
+	std::size_t found_comma_other = newCommand.find_last_of(",");
+	std::size_t lone_number = newCommand.find_first_of("0123456789");
+	if (found_comma != found_comma_other){
+		std::cout << "Invalid Command"<< std::endl;
+		valid = false;
+		return;
+	}
+	else if (found_comma != std::string::npos) {
 		address1 = newCommand.substr(0, found_comma);
 		address2 = newCommand.substr(found_comma + 1, newCommand.length() - 2 - found_comma);
 	}
@@ -38,7 +52,11 @@ void Command::parse()
 		address1 = newCommand.substr(0, found_symbol);
 		address2 = address1;
 	}
-
+	else if (lone_number != std::string::npos){
+		address1 = newCommand.front();
+		address2 = address1;
+	}
+	
 	// store default address if empty
 	if (address1.empty() && address2.empty()) {
 		address1 = ".";

@@ -17,6 +17,7 @@ private:
 	int current{ 1 };
 	int numlines{ 0 };
 	Command command;
+	bool isSaved{true};
 
 	void loadToBuffer(const std::string& filename);
 	bool fileExists(const std::string& filename);
