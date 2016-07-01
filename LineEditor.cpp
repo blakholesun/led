@@ -25,7 +25,7 @@ void LineEditor::loadToBuffer(const std::string& filename) {
 		buffer.push_back(line);
 		++numlines;
 	}
-	current = numlines-1;
+	current = numlines;
 }
 
 bool LineEditor::fileExists(const std::string& filename) {
@@ -88,6 +88,8 @@ void LineEditor::run() {
 				std::cout << current << std::endl;
 			}
 		}
+		std::cout<< "current is : "<< current << std::endl;
+		std::cout<< "numlines is : "<< numlines << std::endl;
 		std::cout << ":";
 		std::cin >> usercommand;
 	}
@@ -99,7 +101,7 @@ int LineEditor::mapAddressString(std::string& usercommand) const {
 		return current;
 	}
 	else if (usercommand == "$") {
-		return numlines - 1;
+		return numlines;
 	}
 	else {
 		return std::stoi(usercommand);
@@ -107,10 +109,10 @@ int LineEditor::mapAddressString(std::string& usercommand) const {
 }
 
 bool LineEditor::checkRange(int& start, int& end) const {
-	if (start < 0 || start > numlines - 1 || end < 0 || end > numlines - 1) {
+	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Defaulting to all lines." << std::endl;
-		start = 0;
-		end = numlines - 1;
+		start = 1;
+		end = numlines;
 		return false;
 	}
 	return true;
@@ -121,7 +123,7 @@ void LineEditor::append(int& lineNumber) {
 	auto it = buffer.begin();
 	// Need to go past by 1
 	++it;
-	auto i = 0;
+	auto i = 1;
 	while (i<lineNumber){
 		++it;
 		++i;
@@ -136,13 +138,13 @@ void LineEditor::append(int& lineNumber) {
 		++numlines;
 		std::getline(std::cin,line);
 	}
-	current = numlines-1;
+	current = numlines;
 }
 
 void LineEditor::insert(int& lineNumber) {
 	auto it = buffer.begin();
-	auto i = 0;
-	while (i<lineNumber){
+	auto i =1;
+	while (i < lineNumber){
 		++it;
 		++i;
 	}
@@ -155,31 +157,37 @@ void LineEditor::insert(int& lineNumber) {
 		buffer.insert(it,line);
 		++numlines;
 		std::getline(std::cin,line);
+		++i;
 	}
-	current = i;
+	current = i-1;
 }
 
 void LineEditor::removel(int& start, int& end) {
-	if (start < 0 || start > numlines - 1 || end < 0 || end > numlines - 1) {
+	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Not removing any lines." << std::endl;
-		start = 0;
-		end = numlines - 1;
+		start = 1;
+		end = numlines;
 		return;
 	}
+
+	std::cout << start << std::endl;
+	std::cout << end << std::endl;
+	std::cout << numlines << std::endl;
 
 	auto it1 = buffer.begin();
 	auto it2 = it1;
 
-	std::advance(it1,start);
-	std::advance(it2,end+1);
+	std::advance(it1,start-1);
+	std::advance(it2,end);
 	
 	buffer.erase(it1,it2);
 	numlines -= end-start+1;
-	
-	if ( end != numlines-1 ){
-		current = start-1;
-	}else{
+	std::cout << end << std::endl;
+	std::cout << numlines << std::endl;
+	if ( start < numlines ){
 		current = start;
+	}else{
+		current = start-1;
 	}
 	
 }
@@ -187,7 +195,7 @@ void LineEditor::removel(int& start, int& end) {
 void LineEditor::print(int& start, int& end) {
 
 	checkRange(start, end);
-	int i{ 0 };
+	int i{ 1 };
 	for (auto it = buffer.begin(); it != buffer.end(); ++it) {
 		//std::cout << i <<std::endl;
 		if (i >= start && i<=end){
@@ -200,7 +208,7 @@ void LineEditor::print(int& start, int& end) {
 
 void LineEditor::nprint(int& start, int& end) {
 	checkRange(start, end);
-	int i{ 0 };
+	int i{ 1 };
 	for (auto it = buffer.begin(); it != buffer.end(); ++it) {
 		if (i >= start && i<=end){
 			std::cout << i << ") " << *it << std::endl;
@@ -213,10 +221,10 @@ void LineEditor::nprint(int& start, int& end) {
 }
 
 void LineEditor::change(int& start, int& end) {
-	if (start < 0 || start > numlines - 1 || end < 0 || end > numlines - 1) {
+	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Not changing any lines." << std::endl;
-		start = 0;
-		end = numlines - 1;
+		start = 1;
+		end = numlines;
 		return;
 	}
 
@@ -228,7 +236,7 @@ void LineEditor::change(int& start, int& end) {
 	//std::cin.ignore();
 	std::getline(std::cin,replace);
 	
-	int i {0};
+	int i {1};
 	std::size_t found;
 	for(auto &line : buffer){
 		if (i >= start && i <= end){
@@ -243,18 +251,18 @@ void LineEditor::change(int& start, int& end) {
 }
 
 void LineEditor::up(int& nLines) {
-	if (current - nLines < 0 ){
-		std::cout << "BOF reached. Setting current to line 0" << std::endl;
-		current = 0;
+	if (current - nLines < 1 ){
+		std::cout << "BOF reached. Setting current to line 1" << std::endl;
+		current = 1;
 	} else {
 		current -= nLines;
 	}
 }
 
 void LineEditor::down(int& nLines) {
-	if (current + nLines > numlines-1 ){
-		std::cout << "EOF reached. Setting current to line " << numlines-1 <<std::endl;
-		current = numlines-1;
+	if (current + nLines > numlines ){
+		std::cout << "EOF reached. Setting current to line " << numlines <<std::endl;
+		current = numlines;
 	} else {
 		current += nLines;
 	}

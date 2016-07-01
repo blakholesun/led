@@ -14,7 +14,7 @@ public:
 private:
 	std::string filename;
 	std::list<std::string> buffer;
-	int current{ 0 };
+	int current{ 1 };
 	int numlines{ 0 };
 	Command command;
 
