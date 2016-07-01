@@ -1,0 +1,28 @@
+//===============================================================================================/
+//
+// Assignment 2 - COMP 5421
+// Author: Robert Maglieri
+// ID: 40013562
+// Files:   Command.h, Command.cpp
+//          LineEditor.h, LineEditor.cpp
+//          LineEditorDriver.cpp
+//
+// Description: This assignment creates a simple command line text editor using a specified syntax.
+//                  Syntax is : address1 , address2 command
+//                  address1 is an integer starting address, address 2 is an integer end address
+//                      Address ranges are 1<x<n, where n is the last line.
+//                  command can be any one of "a,i,r,p,n,c,u,d,w"
+//
+//              If the command takes only one input and two are supplied ( ex 1,3d ), then the address
+//              is defaulted to the first address supplied.
+//
+//              There are two special characters, "." which represents the current line and "$" which is the 
+//              last line. These can be used in place of integer address1 and address2.
+//                
+// How to run: 1)   Compile the code using your favorite compiler
+//                  On linux use: g++ -std=c++11 LineEditorDriver.cpp LineEditor.cpp Command.cpp 
+//             2)   Run ./a.out [arg], where arg is the filename.
+//             3)   Enter commands.
+//
+//
+//================================================================================================/
