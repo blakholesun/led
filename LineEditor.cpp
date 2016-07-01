@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 
+//Constructor
 LineEditor::LineEditor(const std::string& filename) {
 	this->filename = filename;
 	// if file doesnt exist create and load empty buffer
@@ -16,6 +17,7 @@ LineEditor::LineEditor(const std::string& filename) {
 	}
 }
 
+// Loads all file lines to the buffer
 void LineEditor::loadToBuffer(const std::string& filename) {
 	std::fstream fs;
 	fs.open(filename, std::fstream::in);
@@ -28,19 +30,22 @@ void LineEditor::loadToBuffer(const std::string& filename) {
 	current = numlines;
 }
 
+// Checks file existence
 bool LineEditor::fileExists(const std::string& filename) {
 	std::ifstream f(filename);
 	return f.good();
 }
 
+// Main method that controls the text editor
 void LineEditor::run() {
 	std::cout << "Entering command mode.\n:";
-	//Keep running until q received
-
 	std::string usercommand;
 	std::cin >> usercommand;
+
+	//continue running while steam is good
 	while (std::cin) {
-		
+
+		//parse command
 		command.setCommand(usercommand);
 		command.parse();
 		std::string a1 = command.getAddress1();
@@ -50,8 +55,7 @@ void LineEditor::run() {
 		int ad1 = mapAddressString(a1);
 		int ad2 = mapAddressString(a2);
 
-		//std::cout << csymbol << ad1 << ad2 << std::endl;
-
+		// check if file was empty and only allow q a i
 		if (numlines == 0 && command.isValid()){
 			if (csymbol == 'a'){
 				//std::cout << "IN" << std::endl;
@@ -71,6 +75,7 @@ void LineEditor::run() {
 			}
 		}
 		else if (command.isValid()){
+			//command checker
 
 			if (csymbol == 'p'){
 				//std::cout << "IN" << std::endl;
@@ -122,6 +127,7 @@ void LineEditor::run() {
 
 }
 
+// Mapping for . and $ to current and last line
 int LineEditor::mapAddressString(std::string& usercommand) const {
 	if (usercommand == ".") {
 		return current;
@@ -134,6 +140,7 @@ int LineEditor::mapAddressString(std::string& usercommand) const {
 	}
 }
 
+// Checks the range of start and end to be within legal 1<x<$
 bool LineEditor::checkRange(int& start, int& end) const {
 	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Defaulting to all lines." << std::endl;
@@ -144,6 +151,7 @@ bool LineEditor::checkRange(int& start, int& end) const {
 	return true;
 }
 
+// Append function, current is set to last line
 void LineEditor::append(int& lineNumber) {
 	
 	auto it = buffer.begin();
@@ -167,6 +175,7 @@ void LineEditor::append(int& lineNumber) {
 	current = numlines;
 }
 
+// Insert method, current is set to line before insert
 void LineEditor::insert(int& lineNumber) {
 	auto it = buffer.begin();
 	auto i =1;
@@ -188,6 +197,7 @@ void LineEditor::insert(int& lineNumber) {
 	current = i-1;
 }
 
+// Remove method, current is set to last line in range or prior if none
 void LineEditor::removel(int& start, int& end) {
 	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Not removing any lines." << std::endl;
@@ -196,9 +206,9 @@ void LineEditor::removel(int& start, int& end) {
 		return;
 	}
 
-	std::cout << start << std::endl;
-	std::cout << end << std::endl;
-	std::cout << numlines << std::endl;
+	//std::cout << start << std::endl;
+	//std::cout << end << std::endl;
+	//std::cout << numlines << std::endl;
 
 	auto it1 = buffer.begin();
 	auto it2 = it1;
@@ -218,6 +228,7 @@ void LineEditor::removel(int& start, int& end) {
 	
 }
 
+// Print method, prints a line range, current set to end of range
 void LineEditor::print(int& start, int& end) {
 
 	checkRange(start, end);
@@ -232,12 +243,13 @@ void LineEditor::print(int& start, int& end) {
 	current = end;
 }
 
+// Print line method, prints the line with numbers, current set to end of range
 void LineEditor::nprint(int& start, int& end) {
 	checkRange(start, end);
 	int i{ 1 };
 	for (auto it = buffer.begin(); it != buffer.end(); ++it) {
 		if (i >= start && i<=end){
-			std::cout << i << ") " << *it << std::endl;
+			std::cout << i << "  " << *it << std::endl;
 		}
 		++i;
 	}
@@ -246,6 +258,7 @@ void LineEditor::nprint(int& start, int& end) {
 
 }
 
+// Find and replace method, current is set to end of range
 void LineEditor::change(int& start, int& end) {
 	if (start < 1 || start > numlines || end < 1 || end > numlines) {
 		std::cout << "Invalid range. Not changing any lines." << std::endl;
@@ -277,6 +290,7 @@ void LineEditor::change(int& start, int& end) {
 
 }
 
+// MOves current up by nLines
 void LineEditor::up(int& nLines) {
 	if (current - nLines < 1 ){
 		std::cout << "BOF reached. Setting current to line 1" << std::endl;
@@ -286,6 +300,7 @@ void LineEditor::up(int& nLines) {
 	}
 }
 
+// Moves current down by nLines
 void LineEditor::down(int& nLines) {
 	if (current + nLines > numlines ){
 		std::cout << "EOF reached. Setting current to line " << numlines <<std::endl;
@@ -295,6 +310,7 @@ void LineEditor::down(int& nLines) {
 	}
 }
 
+// Writes buffer to file
 void LineEditor::write() {
 	std::cout << filename << std::endl;
 	std::ofstream fs{filename};
@@ -315,6 +331,7 @@ void LineEditor::write() {
 	isSaved = true;
 }
 
+// Quits the program and saves to file if not written.
 void LineEditor::quit(){
 	if (!isSaved){
 		std::cout << "Save changes to " << filename << " (y/n)? ";

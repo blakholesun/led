@@ -26,9 +26,6 @@ private:
 	std::string address2{ "." };
 	char csymbol{ 'p' }; //default is p
 	bool valid{ false };
-
-
-	// Use a map to store the operators?
 };
 
 #endif

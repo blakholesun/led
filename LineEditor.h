@@ -7,6 +7,7 @@
 
 class LineEditor {
 public:
+	LineEditor()=delete;
 	LineEditor(const std::string& filename);
 	~LineEditor() = default;
 	void run();
