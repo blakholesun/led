@@ -8,11 +8,16 @@ Command::Command(std::string command) : command(command) {}
 
 void Command::parse()
 {
-	// Check  for empty string
-	if (command.empty()) { return; }
-
 	// Trim the command
 	std::string newCommand{ trim(command) };
+
+	// Check  for empty string
+	if (newCommand.empty()) { 
+		csymbol = 'd';
+		address1 = "1";
+		address2 = address1;
+		valid = true;
+		return; }
 
 	// determine if only valid symbols are present else set invlaid
 	std::size_t found_invalid = newCommand.find_first_not_of("airpncudwq.$,0123456789=");
@@ -32,7 +37,7 @@ void Command::parse()
 		return;
 	}
 	else if (found_symbol != std::string::npos) {
-		csymbol = command[found_symbol];
+		csymbol = newCommand[found_symbol];
 	}
 
 	//look for occurrence of comma if none
@@ -40,11 +45,15 @@ void Command::parse()
 	// if only a number store it to the address field
 	std::size_t found_comma = newCommand.find_first_of(",");
 	std::size_t found_comma_other = newCommand.find_last_of(",");
-	std::size_t lone_number = newCommand.find_first_of("0123456789");
+	std::size_t lone_address = newCommand.find_first_of("0123456789.$");
 	if (found_comma != found_comma_other){
 		std::cout << "Invalid Command"<< std::endl;
 		valid = false;
 		return;
+	}
+	else if (found_comma == 0){
+		address1 = "1";
+		address2 = "$";
 	}
 	else if (found_comma != std::string::npos) {
 		address1 = newCommand.substr(0, found_comma);
@@ -54,7 +63,7 @@ void Command::parse()
 		address1 = newCommand.substr(0, found_symbol);
 		address2 = address1;
 	}
-	else if (lone_number != std::string::npos){
+	else if (lone_address != std::string::npos){
 		address1 = newCommand.front();
 		address2 = address1;
 	}
@@ -128,7 +137,11 @@ bool Command::isValid() const
 // Trim the whitespace off the command
 std::string Command::trim(std::string& str)
 {
-	size_t first = str.find_first_not_of(' ');
-	size_t last = str.find_last_not_of(' ');
+	size_t first = str.find_first_not_of(" \t");
+	size_t last = str.find_last_not_of(" \t");
+	if (first == std::string::npos){
+		std::cout << "Only whitespace found" << std::endl;
+		return ""; 
+	}
 	return str.substr(first, (last - first + 1));
 }

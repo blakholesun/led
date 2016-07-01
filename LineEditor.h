@@ -20,6 +20,7 @@ private:
 	Command command;
 	bool isSaved{true};
 
+	void newlineLoop();
 	void loadToBuffer(const std::string& filename);
 	bool fileExists(const std::string& filename);
 	int mapAddressString(std::string&) const;
@@ -30,8 +31,8 @@ private:
 	void print(int& start, int& end);
 	void nprint(int& start, int& end);
 	void change(int& start, int& end);
-	void up(int& nLines);
-	void down(int& nLines);
+	void up(const int& nLines);
+	void down(const int& nLines);
 	void write();
 	void quit();
 };

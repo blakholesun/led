@@ -1,6 +1,7 @@
 #include "LineEditor.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 //Constructor
 LineEditor::LineEditor(const std::string& filename) {
@@ -40,17 +41,23 @@ bool LineEditor::fileExists(const std::string& filename) {
 void LineEditor::run() {
 	std::cout << "Entering command mode.\n:";
 	std::string usercommand;
-	std::cin >> usercommand;
-
-	//continue running while steam is good
+	//newlineLoop();
+	std::getline(std::cin,usercommand);
+	//continue running while stream is good
+	//usercommand + " ";
 	while (std::cin) {
 
+		//if (usercommand.empty()) {
+		//	usercommand == "1d";
+		//}
 		//parse command
 		command.setCommand(usercommand);
 		command.parse();
 		std::string a1 = command.getAddress1();
 		std::string a2 = command.getAddress2();
 		
+		//std::cout << command.getCsymbol();
+
 		char csymbol = command.getCsymbol(); 
 		int ad1 = mapAddressString(a1);
 		int ad2 = mapAddressString(a2);
@@ -119,12 +126,24 @@ void LineEditor::run() {
 				std::cout << current << std::endl;
 			}
 		}
-		std::cout<< "current is : "<< current << std::endl;
-		std::cout<< "numlines is : "<< numlines << std::endl;
+		//std::cout<< "current is : "<< current << std::endl;
+		//std::cout<< "numlines is : "<< numlines << std::endl;
 		std::cout << ":";
-		std::cin >> usercommand;
+		//newlineLoop();
+		//usercommand = " ";
+		std::getline(std::cin, usercommand);
 	}
 
+}
+
+void LineEditor::newlineLoop(){
+	//std::cout << ":";
+	std::cin.ignore();
+	while (std::cin.get()=='\n'){
+		down(1);
+		std::cout << ":";
+	}
+	std::cin.unget();
 }
 
 // Mapping for . and $ to current and last line
@@ -164,15 +183,16 @@ void LineEditor::append(int& lineNumber) {
 	}
 
 	std::string line;
-	std::cin.ignore();
+	//std::cin.ignore();
 	std::getline(std::cin,line);
 
 	while(line != "."){ 
 		buffer.insert(it,line);
 		++numlines;
 		std::getline(std::cin,line);
+		++i;
 	}
-	current = numlines;
+	current = i;
 }
 
 // Insert method, current is set to line before insert
@@ -185,7 +205,7 @@ void LineEditor::insert(int& lineNumber) {
 	}
 
 	std::string line;
-	std::cin.ignore();
+	//std::cin.ignore();
 	std::getline(std::cin,line);
 
 	while(line != "."){ 
@@ -291,7 +311,7 @@ void LineEditor::change(int& start, int& end) {
 }
 
 // MOves current up by nLines
-void LineEditor::up(int& nLines) {
+void LineEditor::up(const int& nLines) {
 	if (current - nLines < 1 ){
 		std::cout << "BOF reached. Setting current to line 1" << std::endl;
 		current = 1;
@@ -301,7 +321,7 @@ void LineEditor::up(int& nLines) {
 }
 
 // Moves current down by nLines
-void LineEditor::down(int& nLines) {
+void LineEditor::down(const int& nLines) {
 	if (current + nLines > numlines ){
 		std::cout << "EOF reached. Setting current to line " << numlines <<std::endl;
 		current = numlines;
