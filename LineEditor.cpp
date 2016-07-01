@@ -226,10 +226,6 @@ void LineEditor::removel(int& start, int& end) {
 		return;
 	}
 
-	//std::cout << start << std::endl;
-	//std::cout << end << std::endl;
-	//std::cout << numlines << std::endl;
-
 	auto it1 = buffer.begin();
 	auto it2 = it1;
 
@@ -238,8 +234,7 @@ void LineEditor::removel(int& start, int& end) {
 	
 	buffer.erase(it1,it2);
 	numlines -= end-start+1;
-	std::cout << end << std::endl;
-	std::cout << numlines << std::endl;
+	
 	if ( start < numlines ){
 		current = start;
 	}else{
@@ -288,13 +283,12 @@ void LineEditor::change(int& start, int& end) {
 	}
 
 	std::string text,replace;
+
 	std::cout << "Find: ";
-	std::cin.ignore();
 	std::getline(std::cin,text);
 	std::cout << "Replace: ";
-	//std::cin.ignore();
+
 	std::getline(std::cin,replace);
-	
 	int i {1};
 	std::size_t found;
 	for(auto &line : buffer){
